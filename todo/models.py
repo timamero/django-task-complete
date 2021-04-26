@@ -30,7 +30,7 @@ class Task(models.Model):
    due_date = models.DateField()
    note = models.TextField(blank=True, null=True)
    tag = models.ManyToManyField(Tag)
-   status = models.BooleanField(default=False)
+   complete = models.BooleanField(default=False)
 
    def __str__(self):
         return self.title
