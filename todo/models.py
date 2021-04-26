@@ -6,10 +6,15 @@ class Project(models.Model):
     title = models.CharField(max_length=200)
     description = models.CharField(max_length=500, blank=True, null=True)
 
+    def __str__(self):
+        return self.title
 
 class Tag(models.Model):
     """Model representing tag"""
     name = models.CharField(max_length=20)
+
+    def __str__(self):
+        return self.name
 
 
 class Task(models.Model):
@@ -26,3 +31,6 @@ class Task(models.Model):
    note = models.TextField(blank=True, null=True)
    tag = models.ManyToManyField(Tag)
    status = models.BooleanField(default=False)
+
+   def __str__(self):
+        return self.title
