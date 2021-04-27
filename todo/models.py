@@ -27,10 +27,13 @@ class Task(models.Model):
        HIGH = 3
    priority = models.IntegerField(choices=Priority.choices, default=Priority.LOW)
    
-   due_date = models.DateField()
+   due_date = models.DateField(blank=True, null=True)
    note = models.TextField(blank=True, null=True)
    tag = models.ManyToManyField(Tag)
    complete = models.BooleanField(default=False)
+
+   class Meta:
+        ordering = ['due_date']
 
    def __str__(self):
         return self.title
