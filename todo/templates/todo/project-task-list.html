@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container ml-3 is-flex is-flex-direction-column">
+<h1 class="title has-text-centered">{{ project.title }}</h1>
+<div class="is-align-self-center mb-4">
+<a class="button is-primary">Add Task</a>
+</div>
+
+<div class="columns">
+    <div class="column is-6 is-offset-3 is-12-mobile is-offset-0-mobile">
+        <ul>
+        {% for task in tasks %}
+            <li>
+                <div class="card mb-4">
+                    <header class="card-header">
+                        <p class="card-header-title">{{ task.title }}</p>
+                        <div class="dropdown is-hoverable">
+                        <div class="dropdown-trigger">
+                            <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+                            <span class="icon is-small">
+                                <i class="fas fa-angle-down" aria-hidden="true"></i>
+                            </span>
+                            </button>
+                        </div>
+                        <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                            <div class="dropdown-content">
+                            <a href="#" class="dropdown-item">
+                                Mark Completed
+                            </a>
+                            <a href="#" class="dropdown-item">
+                                Update
+                            </a>
+                            <a href="#" class="dropdown-item">
+                                Delete
+                            </a>
+                            </div>
+                        </div>
+                        </div>
+                    </header>
+
+                        <div class="card-content">
+                            <div class="content">
+                            <p>{{ task.note }}</p>
+
+                            {% for tag in task.tag.all %}
+                            <span class="tag is-primary is-light">
+                            {{ tag }}
+                            </span> 
+                            {% endfor %}
+                        
+                            </div>
+                        </div>
+
+
+                    <footer class="card-footer">
+                        <p class="card-footer-item is-size-7">Priority : {{ task.priority }}</p>
+                        {% if task.due_date %}
+                        <p class="card-footer-item is-size-7">Due Date: {{ task.due_date }}</p>
+                        {% endif %}
+                        
+                    </footer>
+                </div>
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+</div>
+</div>
+
+{% endblock content %}
