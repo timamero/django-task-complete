@@ -7,7 +7,7 @@ from ..models import Project, Tag, Task
 
 class TestProjectModel(TestCase):
     @classmethod
-    def setUp(cls):
+    def setUpTestData(cls):
         Project.objects.create(title='Portfolio', description='Tasks to complete portfolio website')
 
     def test_object_name_is_title(self):
@@ -22,7 +22,7 @@ class TestProjectModel(TestCase):
 
 class TestTagModel(TestCase):
     @classmethod
-    def setUp(cls):
+    def setUpTestData(cls):
         Tag.objects.create(name='design')
 
     def test_object_name_is_name(self):
@@ -37,7 +37,7 @@ class TestTagModel(TestCase):
 
 class TestTaskModel(TestCase):
     @classmethod
-    def setUp(cls):
+    def setUpTestData(cls):
         test_project = Project.objects.create(title='Portfolio', description='Tasks to complete portfolio website')
         test_tag = Tag.objects.create(name='design')
         
