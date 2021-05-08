@@ -21,13 +21,17 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 ]
 
-urlpatterns += [
-    path('todo/', include('todo.urls')),
-]
+# urlpatterns += [
+#     path('todo/', include('todo.urls')),
+# ]
 
 urlpatterns += [
-    path('', RedirectView.as_view(url='todo/', permanent=True)),
+    path('', include('todo.urls')),
 ]
+
+# urlpatterns += [
+#     path('', RedirectView.as_view(url='todo/', permanent=True)),
+# ]
 
 # Add url mapping to serve static files during development
 from django.conf import settings
