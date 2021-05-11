@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}<title>Task - {{ task.title }}</title>{% endblock title %}
+
+{% block content %}
+
+<div class="container is-flex is-flex-direction-column">
+    <h1 class="title has-text-centered">{{ task.title }}</h1>
+
+    <form class="is-flex is-flex-direction-column" method="post">
+    <div class="columns">
+        <div class="column"></div>
+        <div class="column is-6 is-12-mobile">
+            {% csrf_token %}
+            {{ form.non_field_errors }} 
+            {% for field in form %}
+                {% if field.label == 'Tag' %}
+                    <div class="field-wrapper select is-multiple my-2 mx-3">
+                        <label for="field.label">{{ field.label }}</label>
+                        {{ field }}
+                    </div>
+                {% elif field.label == 'Project' or field.label == 'Priority' %}
+                    <div class="field-wrapper my-2 mx-3 is-flex is-flex-direction-column">
+                        <label for="field.label">{{ field.label }}</label>
+                        <div class="select is-align-self-flex-start">
+                            {{ field }}
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="field-wrapper my-3 mx-3">
+                    <label for="field.label">{{ field.label }}</label>
+                    {{ field }}
+                    </div>
+                {% endif %}
+                
+            {% endfor %}
+
+            <div class="buttons is-flex-direction-row is-justify-content-center">
+                <input class="button is-success mr-3 ml-3" type="submit" value="Update">
+                <a class="button is-danger mr-3 ml-3" href="{% url 'task-delete' task.pk %}">Delete</a> 
+                {% comment %} <a class="button is-light mr-3 ml-3" href="#">Cancel</a> {% endcomment %}
+                <input class="button is light mr-3 ml-3" type=button value="Cancel" onClick="window.history.back();return false;">
+            </div>   
+        </div>
+        <div class="column"></div>
+    </div>
+
+    </form>
+
+
+
+
+</div>
+
+{% endblock content %}
