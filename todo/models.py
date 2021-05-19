@@ -2,9 +2,9 @@ from django.db import models
 from django.urls import reverse
 from django.db.models.deletion import CASCADE
 
-# class TaskManager(models.Manager):
-#     def get_queryset(self):
-#         return super(TaskManager, self).get_queryset().filter(complete=False)
+class TaskManager(models.Manager):
+    def get_queryset(self):
+        return super(TaskManager, self).get_queryset().filter(complete=False)
 
 
 class Project(models.Model):
@@ -41,7 +41,8 @@ class Task(models.Model):
     note = models.TextField(blank=True, null=True)
     tag = models.ManyToManyField(Tag)
     complete = models.BooleanField(default=False)
-    #    tasks = TaskManager()
+    objects = models.Manager()
+    tasks = TaskManager()
 
     class Meta:
             ordering = ['due_date']
@@ -49,5 +50,5 @@ class Task(models.Model):
     def __str__(self):
             return self.title
         
-    # def get_absolute_url(self):
-    #     return reverse("task-udpate")
+    def get_absolute_url(self):
+        return reverse("project-task-list", args=[str(self.project_id)])

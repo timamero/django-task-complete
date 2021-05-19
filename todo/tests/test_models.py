@@ -1,6 +1,7 @@
 import datetime
 
 from django.test import TestCase
+from django.urls.base import reverse
 
 from ..models import Project, Tag, Task
 
@@ -18,6 +19,16 @@ class TestProjectModel(TestCase):
         expected_object_name = project.title
         self.assertTrue(isinstance(project, Project))
         self.assertEqual(expected_object_name, str(project))
+
+    def test_project_url(self):
+        """
+        Test project id and URL reverse
+        """
+        project = self.test_project
+        response = self.client.post(
+            reverse("project-task-list", args=[str(project.id)]))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(project.get_absolute_url(), reverse("project-task-list", args=[str(project.id)]))
 
 
 class TestTagModel(TestCase):
@@ -61,3 +72,17 @@ class TestTaskModel(TestCase):
         expected_object_name = task.title
         self.assertTrue(isinstance(task, Task))
         self.assertEqual(expected_object_name, str(task))
+
+    def test_task_url(self):
+        """
+        Test task project id and URL reverse
+        """
+        task = self.test_task
+        response = self.client.post(
+            reverse("project-task-list", args=[str(task.project_id)]))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(task.get_absolute_url(), reverse("project-task-list", args=[str(task.project_id)]))
+
+    def test_tasks_custom_manager(self):
+        tasks = Task.tasks.all()
+        self.assertEqual(tasks.count(), 1)

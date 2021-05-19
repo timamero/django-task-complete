@@ -2,8 +2,8 @@
 
 {% block title %}<title>Task - {{ task.title }}</title>{% endblock title %}
 
-{% block content %}
 
+{% block content %}
 <div class="container is-flex is-flex-direction-column">
     <h1 class="title has-text-centered">{{ task.title }}</h1>
 
@@ -36,19 +36,13 @@
             {% endfor %}
 
             <div class="buttons is-flex-direction-row is-justify-content-center">
-                
-                {% if task.id %}
-                    <input class="button is-success mr-3 ml-3" type="submit" value="Update">
-                    <a class="button is-danger mr-3 ml-3" href="{% url 'task-delete' task.pk %}">Delete</a>
-                {% else %}
-                    <input class="button is-success mr-3 ml-3" type="submit" value="Create Task">
-                {% endif %}
-                {% comment %} <a class="button is-danger mr-3 ml-3" href="{% url 'task-delete' task.pk %}">Delete</a>  {% endcomment %}
+                <input class="button is-success mr-3 ml-3" type="submit" value="Create Task">
                 <input class="button is light mr-3 ml-3" type=button value="Cancel" onClick="window.history.back();return false;">
-            </div>   
+            </div>
         </div>
         <div class="column"></div>
     </div>
+
     </form>
 </div>
 

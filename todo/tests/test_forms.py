@@ -2,9 +2,11 @@ import datetime
 
 from django.test import TestCase
 from django.forms.widgets import Input
+from django.http import HttpRequest
 
 from ..models import Project, Task, Tag
 from ..forms import TaskForm
+from ..views import TaskDeleteView
 
 class TaskFormTest(TestCase):
     @classmethod
