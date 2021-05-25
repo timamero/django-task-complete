@@ -3,7 +3,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, UpdateView, DeleteView, CreateView
 
 from .models import Project, Task
-from .forms import TaskForm
+from .forms import TaskForm, ProjectForm
 
 
 def index(request):
@@ -17,14 +17,27 @@ class ProjectListView(ListView):
 def project_task_list(request, pk):
     project = get_object_or_404(Project, id=pk)
     tasks = Task.tasks.filter(project=project)
-    # tags = tasks.tag.all()
 
     context = {
         'project': project,
         'tasks': tasks,
-        # 'tags': tags,
     }
     return render(request, 'todo/project-task-list.html', context=context)
+
+
+class ProjectUpdateView(UpdateView):
+    model = Project
+    form_class = ProjectForm
+
+
+class ProjectCreateView(CreateView):
+    model = Project
+    form_class = ProjectForm
+
+
+class ProjectDeleteView(DeleteView):
+    model = Project
+    success_url = reverse_lazy('projects')
 
 
 class TaskListView(ListView):
@@ -40,10 +53,17 @@ class TaskCreateView(CreateView):
     model = Task
     form_class = TaskForm
 
+    # def get_initial(self):
+    #     initial = super(TaskCreateView, self).get_initial()
+    #     initial['project'] = 'Restaurant Website'
+    #     return super().get_initial()
+
+    # def get_initial(self):
+    #     return {'project': Project.objects.get()}
+
 
 class TaskDeleteView(DeleteView):
     model = Task
-    # success_url = reverse_lazy('projects')
 
     def get_success_url(self):
         project_id = Task.tasks.get(pk=self.kwargs['pk']).project_id

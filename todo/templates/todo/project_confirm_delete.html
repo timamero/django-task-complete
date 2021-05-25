@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}<title>Delete Project - {{ project.title }}</title>{% endblock title %}
+
+{% block content %}
+<div class="container is-flex is-flex-direction-column">
+    <h1 class="title has-text-centered">Delete Project</h1>
+    <p class="has-text-centered">Are you sure you want to delete the project: {{ project.title }}?</p>
+    <p class="has-text-centered">The project and all tasks associated with this project will be deleted!</p>
+</div>
+
+<form class="is-flex is-flex-direction-column" action="" method="post">
+    {% csrf_token %}
+    <div class="buttons is-flex-direction-row is-justify-content-center mt-5">
+        <input class="button is-danger mr-3 ml-3" type="submit" value="Yes, delete all.">
+        <input class="button is light mr-3 ml-3" type=button value="Cancel" onClick="window.history.back();return false;">
+    </div>
+</form>
+
+
+{% endblock content %}

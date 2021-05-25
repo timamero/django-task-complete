@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}<title>Project - {{ project.title }}</title>{% endblock title %}
+
+{% block content %}
+
+<div class="container is-flex is-flex-direction-column">
+    {% if project.id %}
+        <h1 class="title has-text-centered">Update Project</h1>
+    {% else %}
+        <h1 class="title has-text-centered">Create Project</h1>
+    {% endif %}
+    
+
+    <form class="is-flex is-flex-direction-column" method="post">
+    <div class="columns">
+        <div class="column"></div>
+        <div class="column is-6 is-12-mobile">
+            {% csrf_token %}
+            {{ form.non_field_errors }} 
+            {% for field in form %}
+                <div class="field-wrapper my-3 mx-3">
+                <label for="field.label">{{ field.label }}</label>
+                {{ field }}
+                </div>
+            {% endfor %}
+
+            <div class="buttons is-flex-direction-row is-justify-content-center">
+                {% if project.id %}
+                    <input class="button is-success mr-3 ml-3" type="submit" value="Update">
+                    <a class="button is-danger mr-3 ml-3" href="{% url 'project-delete' project.pk %}">Delete</a>
+                {% else %}
+                    <input class="button is-success mr-3 ml-3" type="submit" value="Create Project">
+                {% endif %}
+                <input class="button is light mr-3 ml-3" type=button value="Cancel" onClick="window.history.back();return false;">
+            </div>   
+        </div>
+        <div class="column"></div>
+    </div>
+    </form>
+</div>
+
+
+
+{% comment %} <div class="container is-flex is-flex-direction-column">
+    {% if project.id %}
+        <h1 class="title has-text-centered">{{ project.title }}</h1>
+        <p>{{ project.description }}</p>
+    {% else %}
+        <h1 class="title has-text-centered">Create Project</h1>
+    {% endif %}
+    
+
+    <form class="is-flex is-flex-direction-column" method="post">
+    <div class="columns">
+        <div class="column"></div>
+        <div class="column is-6 is-12-mobile">
+            {% csrf_token %}
+            {{ form.non_field_errors }} 
+            {% for field in form %}
+                <div class="field-wrapper my-3 mx-3">
+                <label for="field.label">{{ field.label }}</label>
+                {{ field }}
+            {% endfor %}
+
+            <div class="buttons is-flex-direction-row is-justify-content- mt-4">
+                {% if project.id %}
+                    <input class="button is-success mr-3 ml-3" type="submit" value="Update">
+                    <a class="button is-danger mr-3 ml-3" href="{% url 'project-delete' project.pk %}">Delete</a>
+                {% else %}
+                    <input class="button is-success mr-3 ml-3" type="submit" value="Create Project">
+                {% endif %}
+                <input class="button is light mr-3 ml-3" type=button value="Cancel" onClick="window.history.back();return false;">
+            </div>   
+        </div>
+        <div class="column"></div>
+    </div>
+    </form>
+</div> {% endcomment %}
+
+{% endblock content %}

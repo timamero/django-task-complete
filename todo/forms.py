@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import widgets
 
-from .models import Task
+from .models import Project, Task
 
 class TaskForm(forms.ModelForm):
     class Meta:
@@ -15,8 +15,20 @@ class TaskForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['title'].widget.attrs.update({'class': 'input'})
-        # self.fields['project'].widget.attrs.update({'class': 'select'})
-        # self.fields['priority'].widget.attrs.update({'class': 'select'})
         self.fields['due_date'].widget.attrs.update({'class': 'input'})
         self.fields['note'].widget.attrs.update({'class': 'textarea'})
         self.fields['tag'].widget.attrs.update({'class': 'multiple'})
+
+    
+class ProjectForm(forms.ModelForm):
+    class Meta:
+        model = Project
+        fields = ['title', 'description']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows':2}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['title'].widget.attrs.update({'class': 'input'})
+        self.fields['description'].widget.attrs.update({'class': 'textarea'})

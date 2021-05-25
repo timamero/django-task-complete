@@ -5,12 +5,24 @@
 {% block content %}
 
 <div class="container is-flex is-flex-direction-column">
-    <h1 class="title has-text-centered">{{ task.title }}</h1>
+    {% if task.id %}
+        <h1 class="title has-text-centered">{{ task.title }}</h1>
+    {% else %}
+        <h1 class="title has-text-centered">Create Task</h1>
+    {% endif %}
+    
 
     <form class="is-flex is-flex-direction-column" method="post">
     <div class="columns">
         <div class="column"></div>
         <div class="column is-6 is-12-mobile">
+            {% comment %} <div class="buttons is-flex-direction-row is-justify-content-center">
+                
+                {% if task.id %}
+                    <input class="button is-success mr-3 ml-3" type="submit" value="Update">
+                {% endif %}
+            </div>    {% endcomment %}
+
             {% csrf_token %}
             {{ form.non_field_errors }} 
             {% for field in form %}
@@ -43,7 +55,6 @@
                 {% else %}
                     <input class="button is-success mr-3 ml-3" type="submit" value="Create Task">
                 {% endif %}
-                {% comment %} <a class="button is-danger mr-3 ml-3" href="{% url 'task-delete' task.pk %}">Delete</a>  {% endcomment %}
                 <input class="button is light mr-3 ml-3" type=button value="Cancel" onClick="window.history.back();return false;">
             </div>   
         </div>

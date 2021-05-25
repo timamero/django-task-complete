@@ -11,10 +11,10 @@
    id="Capa_1"
    x="0px"
    y="0px"
-   viewBox="0 0 1271.7325 248.276"
+   viewBox="0 0 1508.1229 248.276"
    xml:space="preserve"
    sodipodi:docname="check-svgrepo-com.svg"
-   width="1271.7325"
+   width="1508.1229"
    height="248.276"
    inkscape:version="1.0 (4035a4fb49, 2020-05-01)"><metadata
    id="metadata41"><rdf:RDF><cc:Work
@@ -22,8 +22,8 @@
          rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
    id="defs39"><rect
      id="rect848"
-     height="215.325"
-     width="986.03998"
+     height="300.09363"
+     width="1298.166"
      y="65.942001"
      x="350.45987" /></defs><sodipodi:namedview
    inkscape:document-rotation="0"
@@ -43,11 +43,11 @@
    fit-margin-left="0"
    fit-margin-right="0"
    fit-margin-bottom="0"
-   inkscape:zoom="0.67340068"
-   inkscape:cx="625.86484"
-   inkscape:cy="226.36479"
+   inkscape:zoom="0.47616618"
+   inkscape:cx="659.86626"
+   inkscape:cy="281.40379"
    inkscape:window-x="125"
-   inkscape:window-y="224"
+   inkscape:window-y="72"
    inkscape:window-maximized="0"
    inkscape:current-layer="g4" />
 <g
@@ -64,7 +64,7 @@
    xml:space="preserve"><tspan
      x="350.45898"
      y="236.18172"><tspan
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:186.667px;font-family:'Zilla Slab';-inkscape-font-specification:'Zilla Slab, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">Task Ahead</tspan></tspan></text></g>
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:186.667px;font-family:'Zilla Slab';-inkscape-font-specification:'Zilla Slab, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">TaskComplete</tspan></tspan></text></g>
 <g
    id="g6"
    transform="translate(1.2501185e-4,-24.362)">
