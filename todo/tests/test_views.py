@@ -24,7 +24,7 @@ class TestIndexView(TestCase):
         request = HttpRequest()
         response = index(request)
         html = response.content.decode('utf8')
-        html_title = '<title>Task Ahead</title>'
+        html_title = '<title>Task Complete</title>'
         html_doctype = '\n<!DOCTYPE html>\n'
         self.assertIn(html_title, html)
         self.assertTrue(html.startswith(html_doctype))
