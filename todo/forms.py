@@ -6,7 +6,10 @@ from .models import Project, Task
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ['title', 'project', 'priority', 'due_date', 'note', 'tag']
+        fields = ['title', 'project', 'priority', 'due_date', 'note', 'tag', 'complete']
+        labels = {
+            'complete': 'Task Completed?'
+        }
         widgets = {
             'due_date': forms.DateInput(attrs={'class':'form-control', 'type':'date'}),
             'note': forms.Textarea(attrs={'rows':2}),

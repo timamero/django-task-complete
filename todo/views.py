@@ -53,14 +53,6 @@ class TaskCreateView(CreateView):
     model = Task
     form_class = TaskForm
 
-    # def get_initial(self):
-    #     initial = super(TaskCreateView, self).get_initial()
-    #     initial['project'] = 'Restaurant Website'
-    #     return super().get_initial()
-
-    # def get_initial(self):
-    #     return {'project': Project.objects.get()}
-
 
 class TaskDeleteView(DeleteView):
     model = Task

@@ -16,12 +16,12 @@
     <div class="columns">
         <div class="column"></div>
         <div class="column is-6 is-12-mobile">
-            {% comment %} <div class="buttons is-flex-direction-row is-justify-content-center">
+            <div class="buttons is-flex-direction-row is-justify-content-center">
                 
                 {% if task.id %}
                     <input class="button is-success mr-3 ml-3" type="submit" value="Update">
                 {% endif %}
-            </div>    {% endcomment %}
+            </div>
 
             {% csrf_token %}
             {{ form.non_field_errors }} 
