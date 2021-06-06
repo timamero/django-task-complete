@@ -60,3 +60,7 @@ class TaskDeleteView(DeleteView):
     def get_success_url(self):
         project_id = Task.tasks.get(pk=self.kwargs['pk']).project_id
         return reverse_lazy('project-task-list', kwargs={'pk': project_id})
+
+class CompletedTaskListView(ListView):
+    queryset = Task.objects.filter(complete=True)
+    template_name = 'todo/completed-task-list.html'

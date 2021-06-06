@@ -5,7 +5,7 @@ from django.forms.widgets import Input
 from django.http import HttpRequest
 
 from ..models import Project, Task, Tag
-from ..forms import TaskForm
+from ..forms import TaskForm, ProjectForm
 from ..views import TaskDeleteView
 
 class TaskFormTest(TestCase):
@@ -49,4 +49,27 @@ class TaskFormTest(TestCase):
         }
 
         form = TaskForm(data=data)
+        self.assertFalse(form.is_valid())
+
+class ProjectFormTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.test_project = Project.objects.create(title='Portfolio', description='Tasks to complete portfolio website')
+
+    def test_valid_form(self):
+        data = {
+            'title': self.test_project.title,
+            'description': self.test_project.description
+        }
+
+        form = ProjectForm(data=data)
+        self.assertTrue(form.is_valid())
+
+    def test_invalid_form(self):
+        data = {
+            'title': '',
+            'description': self.test_project.description
+        }
+        
+        form = ProjectForm(data=data)
         self.assertFalse(form.is_valid())

@@ -1,14 +1,13 @@
 {% extends 'base.html' %}
 
-{% block title %}<title>Task Ahead - Tasks</title>{% endblock title %}
+{% block title %}<title>Task Ahead - Completed Tasks</title>{% endblock title %}
 
 {% block content %}
 
 <div class="container is-flex is-flex-direction-column">
 <h1 class="title has-text-centered">Tasks</h1>
 <div class="is-align-self-center mb-4">
-<a class="button is-primary" href="{% url 'task-create' %}">Add Task</a>
-<a class="button is-light" href="{% url 'completed-tasks' %}">See Completed Tasks</a>
+<a class="button is-light" href="{% url 'tasks' %}">See Tasks</a>
 </div>
 
 <div class="columns">
@@ -18,8 +17,7 @@
             <li>
                 <div class="card mb-4">
                     <header class="card-header">
-                        <p class="card-header-title">{{ task.title }}</p>
-                        {% comment %} <p class="has-text-right">{{ task.project }}</p> {% endcomment %}
+                        <p class="card-header-title has-text-grey">{{ task.title }}</p>
                         <div class="dropdown is-right is-hoverable">
                             <div class="dropdown-trigger">
                                 <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
@@ -42,8 +40,8 @@
                     </header>
 
                         <div class="card-content">
-                            <div class="content">
-                            <p><strong>{{ task.project }}</strong></p>
+                            <div class="content has-text-grey">
+                            <p class=""><strong>{{ task.project }}</strong></p>
                             <p>{{ task.note }}</p>
 
                             {% for tag in task.tag.all %}
@@ -59,9 +57,9 @@
                     <footer class="card-footer">
                         {% comment %} <p class="card-footer-item is-size-7">{{ task.project }}</p> {% endcomment %}
                         <p class="card-footer-item is-size-7">Priority : {{ task.priority }}</p>
-                        {% if task.due_date %}
+                        {% comment %} {% if task.due_date %}
                         <p class="card-footer-item is-size-7">Due Date: {{ task.due_date }}</p>
-                        {% endif %}
+                        {% endif %} {% endcomment %}
                         
                     </footer>
                 </div>
