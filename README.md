@@ -1,5 +1,5 @@
 # Task Complete
-A task management application built with Django.
+A task management application built with Django.  
 This project is in development.
 
 ## Overview
