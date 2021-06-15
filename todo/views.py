@@ -1,7 +1,7 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
-from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, UpdateView, DeleteView, CreateView
 
 from .models import Project, Task
@@ -24,6 +24,9 @@ class ProjectListView(LoginRequiredMixin, ListView):
 def project_task_list(request, pk):
     project = get_object_or_404(Project, id=pk)
     tasks = Task.tasks.filter(project=project)
+
+    if request.user != project.user:
+        return redirect('/account/login/?next=%s')
 
     context = {
         'project': project,
@@ -53,6 +56,9 @@ class ProjectDeleteView(LoginRequiredMixin, DeleteView):
 
 class TaskListView(LoginRequiredMixin, ListView):
     queryset = Task.tasks.all()
+    
+    def get_queryset(self):
+        return Task.objects.filter(project__user = self.request.user)
 
 
 class TaskUpdateView(LoginRequiredMixin, UpdateView):
