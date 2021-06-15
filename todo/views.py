@@ -38,6 +38,10 @@ class ProjectCreateView(LoginRequiredMixin, CreateView):
     model = Project
     form_class = ProjectForm
 
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
 
 class ProjectDeleteView(LoginRequiredMixin, DeleteView):
     model = Project
