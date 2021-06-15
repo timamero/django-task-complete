@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.views.generic import ListView, UpdateView, DeleteView, CreateView
 
 from .models import Project, Task
@@ -15,6 +15,9 @@ def index(request):
 class ProjectListView(LoginRequiredMixin, ListView):
     login_url = '/account/login/'
     model = Project
+
+    def get_queryset(self):
+        return Project.objects.filter(user=self.request.user)
 
 
 @login_required
