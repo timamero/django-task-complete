@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.db.models.deletion import CASCADE
+from django.contrib.auth.models import User
 
 class TaskManager(models.Manager):
     def get_queryset(self):
@@ -9,6 +10,7 @@ class TaskManager(models.Manager):
 
 class Project(models.Model):
     """Model representing project which will contain list of tasks"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     description = models.CharField(max_length=500, blank=True, null=True)
 
