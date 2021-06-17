@@ -16,6 +16,7 @@ class ProjectListView(LoginRequiredMixin, ListView):
     login_url = '/account/login/'
     model = Project
 
+    # List only projects that belong to logged in user
     def get_queryset(self):
         return Project.objects.filter(user=self.request.user)
 
@@ -35,12 +36,18 @@ def project_task_list(request, pk):
     return render(request, 'todo/project-task-list.html', context=context)
 
 
-class ProjectUpdateView(LoginRequiredMixin, UpdateView):
+class ProjectUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    login_url = '/account/login/'
     model = Project
     form_class = ProjectForm
 
+    def test_func(self):
+        project = self.get_object()
+        return self.request.user == project.user
+    
 
 class ProjectCreateView(LoginRequiredMixin, CreateView):
+    login_url = '/account/login/'
     model = Project
     form_class = ProjectForm
 
@@ -49,36 +56,60 @@ class ProjectCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class ProjectDeleteView(LoginRequiredMixin, DeleteView):
+class ProjectDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    login_url = '/account/login/'
     model = Project
     success_url = reverse_lazy('projects')
 
+    def test_func(self):
+        project = self.get_object()
+        return self.request.user == project.user
+
 
 class TaskListView(LoginRequiredMixin, ListView):
-    queryset = Task.tasks.all()
+    login_url = '/account/login/'
     
     def get_queryset(self):
-        return Task.objects.filter(project__user = self.request.user)
+        return Task.tasks.filter(project__user = self.request.user)
 
 
-class TaskUpdateView(LoginRequiredMixin, UpdateView):
+class TaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    login_url = '/account/login/'
     model = Task
     form_class = TaskForm
+
+    def test_func(self):
+        task = self.get_object()
+        return self.request.user == task.project.user
 
 
 class TaskCreateView(LoginRequiredMixin, CreateView):
+    login_url = '/account/login/'
     model = Task
     form_class = TaskForm
+    
+    def get_form_kwargs(self):
+        kwargs = super(TaskCreateView, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
 
 class TaskDeleteView(LoginRequiredMixin, DeleteView):
+    login_url = '/account/login/'
     model = Task
 
     def get_success_url(self):
         project_id = Task.tasks.get(pk=self.kwargs['pk']).project_id
         return reverse_lazy('project-task-list', kwargs={'pk': project_id})
 
+    def test_func(self):
+        task = self.get_object()
+        return self.request.user == task.project.user
+
 
 class CompletedTaskListView(LoginRequiredMixin, ListView):
-    queryset = Task.objects.filter(complete=True)
+    login_url = '/account/login/'
     template_name = 'todo/completed-task-list.html'
+
+    def get_queryset(self):
+        return Task.objects.filter(project__user = self.request.user).filter(complete=True)

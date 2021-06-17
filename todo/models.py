@@ -8,11 +8,18 @@ class TaskManager(models.Manager):
         return super(TaskManager, self).get_queryset().filter(complete=False)
 
 
+# class ProjectManager(models.Manager):
+#     def get_queryset(self):
+#         return super(ProjectManager, self).get_queryset().filter(user=self.request.user)
+
+
 class Project(models.Model):
     """Model representing project which will contain list of tasks"""
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     description = models.CharField(max_length=500, blank=True, null=True)
+    # objects = models.Manager()
+    # projects = ProjectManager()
 
     def __str__(self):
         return self.title
