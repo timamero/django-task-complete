@@ -1,0 +1,10 @@
+#hero-section {
+    background: url("../images/alesia-kazantceva-XLm6-fPwK5Q-unsplash.jpg");
+    background-position: 50% 75%;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.hero-body {
+    background-color: rgb(240, 248, 255, 0.6);
+}
