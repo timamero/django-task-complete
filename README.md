@@ -1,6 +1,8 @@
 # Task Complete
-A task management application built with Django.
-This project is in development.
+A task management application.  
+This project is in development.  
+[View a demo of the current progress here.](https://fc-taskcomplete.herokuapp.com/) (user: testuser, pw: testpassword)
+
 
 ## Overview
-I created this project to learn how to create a full web application that includes user authentication and to practice writing tests for the models, views and forms. I used Bulma as the CSS framework.
+Task complete is a full web application built with Django that includes user authentication and and tests for the models, views and forms. The CSS framework used is Bulma.
