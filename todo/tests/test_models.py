@@ -3,7 +3,7 @@ import datetime
 from django.test import TestCase
 from django.urls.base import reverse
 
-from ..models import Project, Tag, Task
+from ..models import Project, Task
 
 
 class TestProjectModel(TestCase):
@@ -31,26 +31,26 @@ class TestProjectModel(TestCase):
         self.assertEqual(project.get_absolute_url(), reverse("project-task-list", args=[str(project.id)]))
 
 
-class TestTagModel(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.test_tag = Tag.objects.create(name='design')
+# class TestTagModel(TestCase):
+#     @classmethod
+#     def setUpTestData(cls):
+#         cls.test_tag = Tag.objects.create(name='design')
 
-    def test_object_name_is_name(self):
-        """
-        Test Tag object string is equal to name
-        """
-        tag = self.test_tag
-        expected_object_name = tag.name
-        self.assertTrue(isinstance(tag, Tag))
-        self.assertEqual(expected_object_name, str(tag))
+#     def test_object_name_is_name(self):
+#         """
+#         Test Tag object string is equal to name
+#         """
+#         tag = self.test_tag
+#         expected_object_name = tag.name
+#         self.assertTrue(isinstance(tag, Tag))
+#         self.assertEqual(expected_object_name, str(tag))
 
 
 class TestTaskModel(TestCase):
     @classmethod
     def setUpTestData(cls):
         test_project = Project.objects.create(title='Portfolio', description='Tasks to complete portfolio website')
-        test_tag = Tag.objects.create(name='design')
+        # test_tag = Tag.objects.create(name='design')
         
         cls.test_task = Task.objects.create(
             title='Create site map', 
@@ -61,7 +61,7 @@ class TestTaskModel(TestCase):
             complete=False
             )
 
-        cls.test_task.tag.set([test_tag])
+        # cls.test_task.tag.set([test_tag])
 
     def test_object_name_is_title(self):
         """

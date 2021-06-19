@@ -46,11 +46,11 @@
                             <p><strong>{{ task.project }}</strong></p>
                             <p>{{ task.note }}</p>
 
-                            {% for tag in task.tag.all %}
+                            {% comment %} {% for tag in task.tag.all %}
                             <span class="tag is-primary is-light">
                             {{ tag }}
                             </span> 
-                            {% endfor %}
+                            {% endfor %} {% endcomment %}
                             
                             </div>
                         </div>

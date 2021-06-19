@@ -1,8 +1,8 @@
 from django.contrib import admin
 
-from .models import Project, Tag, Task
+from .models import Project, Task
 
-admin.site.register(Tag)
+# admin.site.register(Tag)
 
 
 @admin.register(Task)

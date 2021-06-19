@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.forms.widgets import Input
 from django.http import HttpRequest
 
-from ..models import Project, Task, Tag
+from ..models import Project, Task
 from ..forms import TaskForm, ProjectForm
 from ..views import TaskDeleteView
 
@@ -12,7 +12,7 @@ class TaskFormTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         test_project = Project.objects.create(title='Portfolio', description='Tasks to complete portfolio website')
-        test_tag = Tag.objects.create(name='design')
+        # test_tag = Tag.objects.create(name='design')
         cls.test_task = Task.objects.create(
             title='Create site map', 
             project_id=test_project.id, 
@@ -22,8 +22,8 @@ class TaskFormTest(TestCase):
             complete=False
             )
 
-        cls.test_task.tag.set([test_tag])
-        cls.test_tag_id = test_tag.id
+        # cls.test_task.tag.set([test_tag])
+        # cls.test_tag_id = test_tag.id
     
     def test_valid_form(self):
         data = {
@@ -32,7 +32,7 @@ class TaskFormTest(TestCase):
             'priority': self.test_task.priority,
             'due_date': self.test_task.due_date, 
             'note': self.test_task.note,
-            'tag': [self.test_tag_id],
+            # 'tag': [self.test_tag_id],
         }
 
         form = TaskForm(data=data)
@@ -45,7 +45,7 @@ class TaskFormTest(TestCase):
             'priority': self.test_task.priority,
             'due_date': self.test_task.due_date, 
             'note': self.test_task.note,
-            'tag': [self.test_tag_id],
+            # 'tag': [self.test_tag_id],
         }
 
         form = TaskForm(data=data)
