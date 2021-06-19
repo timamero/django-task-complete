@@ -5,7 +5,7 @@ from django.test import TestCase, Client
 from django.http import HttpRequest
 from django.urls import reverse, reverse_lazy
 
-from todo.models import Project, Tag, Task
+from todo.models import Project, Task
 from todo.views import index
 
 class TestIndexView(TestCase):
@@ -84,7 +84,7 @@ class TestTaskDeleteView(TestCase):
         cls.c = Client()
 
         test_project = Project.objects.create(title='Portfolio', description='Tasks to complete portfolio website')
-        test_tag = Tag.objects.create(name='design')
+        # test_tag = Tag.objects.create(name='design')
         
         cls.test_task = Task.objects.create(
             title='Create site map', 
@@ -95,7 +95,7 @@ class TestTaskDeleteView(TestCase):
             complete=False
             )
 
-        cls.test_task.tag.set([test_tag])
+        # cls.test_task.tag.set([test_tag])
 
     def test_get_success_url(self):
         task = self.test_task

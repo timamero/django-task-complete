@@ -21,12 +21,12 @@ class Project(models.Model):
         return reverse("project-task-list", args=[str(self.id)])
     
 
-class Tag(models.Model):
-    """Model representing tag"""
-    name = models.CharField(max_length=20)
+# class Tag(models.Model):
+#     """Model representing tag"""
+#     name = models.CharField(max_length=20)
 
-    def __str__(self):
-        return self.name
+#     def __str__(self):
+#         return self.name
 
 
 class Task(models.Model):
@@ -41,7 +41,7 @@ class Task(models.Model):
     
     due_date = models.DateField(blank=True, null=True)
     note = models.TextField(blank=True, null=True)
-    tag = models.ManyToManyField(Tag)
+    # tag = models.ManyToManyField(Tag)
     complete = models.BooleanField(default=False)
     objects = models.Manager()
     tasks = TaskManager()

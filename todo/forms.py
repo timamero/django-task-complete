@@ -6,7 +6,7 @@ from .models import Project, Task
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ['title', 'project', 'priority', 'due_date', 'note', 'tag', 'complete']
+        fields = ['title', 'project', 'priority', 'due_date', 'note', 'complete']
         labels = {
             'complete': 'Task Completed?'
         }
@@ -21,7 +21,7 @@ class TaskForm(forms.ModelForm):
         self.fields['title'].widget.attrs.update({'class': 'input'})
         self.fields['due_date'].widget.attrs.update({'class': 'input'})
         self.fields['note'].widget.attrs.update({'class': 'textarea'})
-        self.fields['tag'].widget.attrs.update({'class': 'multiple'})
+        # self.fields['tag'].widget.attrs.update({'class': 'multiple'})
         self.fields['project'].queryset = Project.objects.filter(user=user)
         
         # https://stackoverflow.com/questions/24041649/filtering-a-model-in-a-createview-with-get-queryset

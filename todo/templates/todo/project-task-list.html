@@ -45,11 +45,11 @@
                         <div class="card-content">
                             <div class="content">
                                 <p>{{ task.note }}</p>
-                                {% for tag in task.tag.all %}
+                                {% comment %} {% for tag in task.tag.all %}
                                 <span class="tag is-primary is-light">
                                 {{ tag }}
                                 </span> 
-                                {% endfor %}
+                                {% endfor %} {% endcomment %}
                             </div>
                         </div>
                         <footer class="card-footer">

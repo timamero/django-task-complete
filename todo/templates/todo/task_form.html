@@ -26,12 +26,12 @@
             {% csrf_token %}
             {{ form.non_field_errors }} 
             {% for field in form %}
-                {% if field.label == 'Tag' %}
+                {% comment %} {% if field.label == 'Tag' %}
                     <div class="field-wrapper select is-multiple my-2 mx-3">
                         <label for="field.label">{{ field.label }}</label>
                         {{ field }}
-                    </div>
-                {% elif field.label == 'Project' or field.label == 'Priority' %}
+                    </div> {% endcomment %}
+                {% if field.label == 'Project' or field.label == 'Priority' %}
                     <div class="field-wrapper my-2 mx-3 is-flex is-flex-direction-column">
                         <label for="field.label">{{ field.label }}</label>
                         <div class="select is-align-self-flex-start">
