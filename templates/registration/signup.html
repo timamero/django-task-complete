@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container is-flex is-flex-direction-column">
+
+    <form class="is-align-self-center is-flex is-flex-direction-column" method="post">
+    {% csrf_token %}
+        <table>
+            {{ form.as_table}}
+        </table>
+
+        <input class="button is-primary mt-2 is-align-self-center" type="submit" value="Create Account">
+    </form>
+
+    </div>
+{% endblock %}

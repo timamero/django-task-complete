@@ -1,5 +1,7 @@
 from django import forms
 from django.forms import widgets
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 
 from .models import Project, Task
 
@@ -27,10 +29,6 @@ class TaskForm(forms.ModelForm):
         # https://stackoverflow.com/questions/24041649/filtering-a-model-in-a-createview-with-get-queryset
         
         
-
-        
-
-    
 class ProjectForm(forms.ModelForm):
     class Meta:
         model = Project
@@ -43,3 +41,11 @@ class ProjectForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['title'].widget.attrs.update({'class': 'input'})
         self.fields['description'].widget.attrs.update({'class': 'textarea'})
+
+
+class UserSignUpForm(UserCreationForm):
+    email = forms.EmailField(required="true")
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password1', 'password2']

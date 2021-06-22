@@ -1,12 +1,13 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.contrib.auth.views import PasswordResetView
+from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, UpdateView, DeleteView, CreateView
 
 from .models import Project, Task
-from .forms import TaskForm, ProjectForm
+from .forms import TaskForm, ProjectForm, UserSignUpForm
 
 
 def index(request):
@@ -120,3 +121,23 @@ class PasswordReset(LoginRequiredMixin, PasswordResetView):
     login_url = '/account/login/'
     from_email = 'timadevtest@gmail.com'
     subject_template_name = 'Task Complete: Password reset link'
+
+
+class UserSignUpView(CreateView):
+    form_class = UserSignUpForm
+    template_name = 'registration/signup.html'
+    success_url = reverse_lazy('projects')
+
+    # https://stackoverflow.com/questions/60977692/add-user-to-a-group-at-signup-in-django
+    def post(self, request, *args, **kwargs):
+        pass
+        form = UserSignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.save()
+            user_group = Group.objects.get(name='Task Manager User')
+            user.groups.add(user_group)
+
+            return redirect('login')
+        else:
+            return render(request, self.template_name, {'form' : form })
