@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.views import PasswordResetView
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, UpdateView, DeleteView, CreateView
 
@@ -113,3 +114,9 @@ class CompletedTaskListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return Task.objects.filter(project__user = self.request.user).filter(complete=True)
+
+
+class PasswordReset(LoginRequiredMixin, PasswordResetView):
+    login_url = '/account/login/'
+    from_email = 'timadevtest@gmail.com'
+    subject_template_name = 'Task Complete: Password reset link'
