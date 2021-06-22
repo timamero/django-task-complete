@@ -1,7 +1,7 @@
 # Task Complete
 A task management application.  
 This project is in development.  
-[View a demo of the current progress here.](https://fc-taskcomplete.herokuapp.com/) (user: testuser, pw: testpassword)
+[View a demo of the current progress here.](https://fc-taskcomplete.herokuapp.com/) 
 
 
 ## Overview

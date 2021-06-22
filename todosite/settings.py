@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import os
 from pathlib import Path
-from todosite.secrets import *
+# from todosite.secrets import *
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,12 +22,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = MY_KEY
-# SECRET_KEY = os.environ['SECRET_KEY']
+# SECRET_KEY = MY_KEY
+SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-# DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
+# DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
 ALLOWED_HOSTS = ['fc-taskcomplete.herokuapp.com', '127.0.0.1']
 
@@ -46,7 +46,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    # 'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -82,11 +82,11 @@ WSGI_APPLICATION = 'todosite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': DB_NAME,
-        'USER': DB_USER,
-        'PASSWORD': DB_PW,
-        'HOST': '',
-        'PORT': '',
+        # 'NAME': DB_NAME,
+        # 'USER': DB_USER,
+        # 'PASSWORD': DB_PW,
+        # 'HOST': '',
+        # 'PORT': '',
     }
 }
 
@@ -128,12 +128,17 @@ USE_L10N = True
 USE_TZ = True
 
 # Email Settings
-DEFAULT_FROM_EMAIL = E_USER
+# DEFAULT_FROM_EMAIL = E_USER
+DEFAULT_FROM_EMAIL = os.environ['E_USER']
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = E_HOST
-EMAIL_PORT = E_PORT
-EMAIL_HOST_USER = E_USER
-EMAIL_HOST_PASSWORD = E_PASSWORD
+EMAIL_HOST = os.environ['E_HOST']
+EMAIL_PORT = os.environ['E_PORT']
+EMAIL_HOST_USER = os.environ['E_USER']
+EMAIL_HOST_PASSWORD = os.environ['E_PASSWORD']
+# EMAIL_HOST = E_HOST
+# EMAIL_PORT = E_PORT
+# EMAIL_HOST_USER = E_USER
+# EMAIL_HOST_PASSWORD = E_PASSWORD
 EMAIL_USE_TLS = True
 
 
@@ -147,17 +152,17 @@ STATIC_URL = '/static/'
 # Simplified static file serving.
 # https://warehouse.python.org/project/whitenoise/
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-# STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 # Deployment Variables
-# CSRF_COOKIE_SECURE = True
-# SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 
 # Heroku: Update database configuration from $DATABASE_URL.
 # https://pypi.org/project/dj-database-url/
-# import dj_database_url
-# db_from_env = dj_database_url.config(conn_max_age=500)
-# DATABASES['default'].update(db_from_env)
+import dj_database_url
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)
 
 
 # Default primary key field type
