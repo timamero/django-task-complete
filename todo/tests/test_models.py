@@ -1,8 +1,8 @@
 import datetime
 
+from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls.base import reverse
-from django.contrib.auth.models import User
 
 from ..models import Project, Task
 
@@ -13,7 +13,11 @@ class TestProjectModel(TestCase):
         cls.test_user = User.objects.create(username='john', email='john@example.com')
         cls.test_user.set_password('mysecret')
         cls.test_user.save()
-        cls.test_project = Project.objects.create(title='Portfolio', description='Tasks to complete portfolio website', user=cls.test_user)
+        cls.test_project = Project.objects.create(
+            title='Portfolio',
+            description='Tasks to complete portfolio website',
+            user=cls.test_user
+            )
 
     def test_object_name_is_title(self):
         """
@@ -43,17 +47,20 @@ class TestTaskModel(TestCase):
         cls.test_user = User.objects.create(username='john', email='john@example.com')
         cls.test_user.set_password('mysecret')
         cls.test_user.save()
-        test_project = Project.objects.create(title='Portfolio', description='Tasks to complete portfolio website', user=cls.test_user)
-        
+        test_project = Project.objects.create(
+            title='Portfolio',
+            description='Tasks to complete portfolio website',
+            user=cls.test_user
+            )
+
         cls.test_task = Task.objects.create(
-            title='Create site map', 
-            project_id=test_project.id, 
-            priority=3, 
-            due_date=datetime.date.today() + datetime.timedelta(days=14), 
+            title='Create site map',
+            project_id=test_project.id,
+            priority=3,
+            due_date=datetime.date.today() + datetime.timedelta(days=14),
             note='Lorem ipsum dolor sit amet.',
             complete=False
             )
-
 
     def test_object_name_is_title(self):
         """

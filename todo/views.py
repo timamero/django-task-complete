@@ -1,13 +1,13 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse_lazy
-from django.contrib.auth.views import PasswordResetView
-from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.views.generic import ListView, UpdateView, DeleteView, CreateView
+from django.contrib.auth.models import Group
+from django.contrib.auth.views import PasswordResetView
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
+from .forms import ProjectForm, TaskForm, UserSignUpForm
 from .models import Project, Task
-from .forms import TaskForm, ProjectForm, UserSignUpForm
 
 
 def index(request):
@@ -46,7 +46,7 @@ class ProjectUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def test_func(self):
         project = self.get_object()
         return self.request.user == project.user
-    
+
 
 class ProjectCreateView(LoginRequiredMixin, CreateView):
     login_url = '/account/login/'
@@ -70,9 +70,9 @@ class ProjectDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 class TaskListView(LoginRequiredMixin, ListView):
     login_url = '/account/login/'
-    
+
     def get_queryset(self):
-        return Task.tasks.filter(project__user = self.request.user)
+        return Task.tasks.filter(project__user=self.request.user)
 
 
 class TaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -89,7 +89,7 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
     login_url = '/account/login/'
     model = Task
     form_class = TaskForm
-    
+
     def get_form_kwargs(self):
         kwargs = super(TaskCreateView, self).get_form_kwargs()
         kwargs['user'] = self.request.user
@@ -114,7 +114,7 @@ class CompletedTaskListView(LoginRequiredMixin, ListView):
     template_name = 'todo/completed-task-list.html'
 
     def get_queryset(self):
-        return Task.objects.filter(project__user = self.request.user).filter(complete=True)
+        return Task.objects.filter(project__user=self.request.user).filter(complete=True)
 
 
 class PasswordReset(LoginRequiredMixin, PasswordResetView):
@@ -140,4 +140,4 @@ class UserSignUpView(CreateView):
 
             return redirect('login')
         else:
-            return render(request, self.template_name, {'form' : form })
+            return render(request, self.template_name, {'form': form})

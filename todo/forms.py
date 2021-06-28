@@ -1,9 +1,9 @@
 from django import forms
-from django.forms import widgets
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
 from .models import Project, Task
+
 
 class TaskForm(forms.ModelForm):
     class Meta:
@@ -13,8 +13,8 @@ class TaskForm(forms.ModelForm):
             'complete': 'Task Completed?'
         }
         widgets = {
-            'due_date': forms.DateInput(attrs={'class':'form-control', 'type':'date'}),
-            'note': forms.Textarea(attrs={'rows':2}),
+            'due_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'note': forms.Textarea(attrs={'rows': 2}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -24,16 +24,16 @@ class TaskForm(forms.ModelForm):
         self.fields['due_date'].widget.attrs.update({'class': 'input'})
         self.fields['note'].widget.attrs.update({'class': 'textarea'})
         self.fields['project'].queryset = Project.objects.filter(user=user)
-        
+
         # https://stackoverflow.com/questions/24041649/filtering-a-model-in-a-createview-with-get-queryset
-        
-        
+
+
 class ProjectForm(forms.ModelForm):
     class Meta:
         model = Project
         fields = ['title', 'description']
         widgets = {
-            'description': forms.Textarea(attrs={'rows':2}),
+            'description': forms.Textarea(attrs={'rows': 2}),
         }
 
     def __init__(self, *args, **kwargs):
