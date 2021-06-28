@@ -1,7 +1,7 @@
+from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
-from django.db.models.deletion import CASCADE
-from django.contrib.auth.models import User
+
 
 class TaskManager(models.Manager):
     def get_queryset(self):
@@ -24,13 +24,13 @@ class Project(models.Model):
 class Task(models.Model):
     title = models.CharField(max_length=200)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    
+
     class Priority(models.IntegerChoices):
         LOW = 1
         MEDIUM = 2
         HIGH = 3
     priority = models.IntegerField(choices=Priority.choices, default=Priority.LOW)
-    
+
     due_date = models.DateField(blank=True, null=True)
     note = models.TextField(blank=True, null=True)
     complete = models.BooleanField(default=False)
@@ -38,10 +38,10 @@ class Task(models.Model):
     tasks = TaskManager()
 
     class Meta:
-            ordering = ['due_date']
+        ordering = ['due_date']
 
     def __str__(self):
-            return self.title
-        
+        return self.title
+
     def get_absolute_url(self):
         return reverse("project-task-list", args=[str(self.project_id)])

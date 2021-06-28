@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import os
 from pathlib import Path
+
+import dj_database_url
+
 # from todosite.secrets import *
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -146,7 +149,7 @@ EMAIL_USE_TLS = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 # The absolute path to the directory where collectstatic will collect static files for deployment.
-STATIC_ROOT = BASE_DIR / 'staticfiles'  #. os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # os.path.join(BASE_DIR, 'staticfiles')
 
 STATIC_URL = '/static/'
 # Simplified static file serving.
@@ -160,7 +163,6 @@ SESSION_COOKIE_SECURE = True
 
 # Heroku: Update database configuration from $DATABASE_URL.
 # https://pypi.org/project/dj-database-url/
-import dj_database_url
 db_from_env = dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(db_from_env)
 

@@ -1,15 +1,17 @@
-from unittest import skip
 import datetime
 
-from django.test import TestCase, Client, RequestFactory
-from unittest import skip
+from django.contrib.auth.models import AnonymousUser, Group, User
 from django.http import HttpRequest
+from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse, reverse_lazy
-from django.contrib.auth.models import User, AnonymousUser, Group
 
+from todo.forms import ProjectForm
 from todo.models import Project, Task
-from todo.views import index, ProjectUpdateView, ProjectCreateView, ProjectDeleteView, TaskListView, TaskUpdateView, TaskCreateView, TaskDeleteView, CompletedTaskListView, UserSignUpView
-from todo.forms import ProjectForm, UserSignUpForm
+from todo.views import (CompletedTaskListView, ProjectCreateView,
+                        ProjectDeleteView, ProjectUpdateView, TaskCreateView,
+                        TaskDeleteView, TaskListView, TaskUpdateView,
+                        UserSignUpView, index)
+
 
 class TestIndexView(TestCase):
     @classmethod
@@ -46,7 +48,7 @@ class ProjectListViewTest(TestCase):
         number_of_projects = 5
         for project in range(number_of_projects):
             Project.objects.create(
-                title='Portfolio', 
+                title='Portfolio',
                 description='Tasks to complete portfolio website',
                 user=cls.test_user
                 )
@@ -73,20 +75,24 @@ class TestProjectTaskListView(TestCase):
         cls.test_user2.set_password('mysecret2')
         cls.test_user2.save()
 
-        cls.test_project = Project.objects.create(title='Portfolio', description='Tasks to complete portfolio website', user=cls.test_user)
+        cls.test_project = Project.objects.create(
+            title='Portfolio',
+            description='Tasks to complete portfolio website',
+            user=cls.test_user
+            )
 
         # Create 5 Tasks
         number_of_tasks = 5
         for task in range(number_of_tasks):
             Task.objects.create(
-                title='Create site map', 
-                project_id=cls.test_project.id, 
-                priority=3, 
-                due_date=datetime.date.today() + datetime.timedelta(days=14), 
+                title='Create site map',
+                project_id=cls.test_project.id,
+                priority=3,
+                due_date=datetime.date.today() + datetime.timedelta(days=14),
                 note='Lorem ipsum dolor sit amet.',
                 complete=False
             )
-    
+
     def test_view_url_exists_at_desired_location(self):
         self.c.force_login(self.test_user)
         id = self.test_project.id
@@ -116,7 +122,11 @@ class TestProjectUpdateView(TestCase):
         cls.test_user.set_password('mysecret')
         cls.test_user.save()
 
-        cls.test_project = Project.objects.create(title='Portfolio', description='Tasks to complete portfolio website', user=cls.test_user)
+        cls.test_project = Project.objects.create(
+            title='Portfolio',
+            description='Tasks to complete portfolio website',
+            user=cls.test_user
+            )
 
     def test_test_func_method_passes(self):
         url = reverse('project-update', kwargs={'pk': self.test_project.id})
@@ -147,7 +157,11 @@ class TestProjectCreateView(TestCase):
         cls.test_user.set_password('mysecret')
         cls.test_user.save()
 
-        cls.test_project = Project.objects.create(title='Portfolio', description='Tasks to complete portfolio website', user=cls.test_user)
+        cls.test_project = Project.objects.create(
+            title='Portfolio',
+            description='Tasks to complete portfolio website',
+            user=cls.test_user
+            )
 
     def test_form_valid_method(self):
         url = reverse('project-create')
@@ -157,7 +171,7 @@ class TestProjectCreateView(TestCase):
             'title': self.test_project.title,
             'description': self.test_project.description,
         }
-        form = ProjectForm(data=data)  
+        form = ProjectForm(data=data)
         view = ProjectCreateView()
         view.setup(request)
 
@@ -173,7 +187,11 @@ class TestProjectDeleteView(TestCase):
         cls.test_user.set_password('mysecret')
         cls.test_user.save()
 
-        cls.test_project = Project.objects.create(title='Portfolio', description='Tasks to complete portfolio website', user=cls.test_user)
+        cls.test_project = Project.objects.create(
+            title='Portfolio',
+            description='Tasks to complete portfolio website',
+            user=cls.test_user
+            )
 
     def test_test_func_method_passes(self):
         url = reverse('project-delete', kwargs={'pk': self.test_project.id})
@@ -194,16 +212,20 @@ class TestTaskListView(TestCase):
         cls.test_user.set_password('mysecret')
         cls.test_user.save()
 
-        cls.test_project = Project.objects.create(title='Portfolio', description='Tasks to complete portfolio website', user=cls.test_user)
+        cls.test_project = Project.objects.create(
+            title='Portfolio',
+            description='Tasks to complete portfolio website',
+            user=cls.test_user
+            )
 
         # Create 5 Tasks
         number_of_tasks = 5
         for task in range(number_of_tasks):
             Task.objects.create(
-                title='Create site map', 
-                project_id=cls.test_project.id, 
-                priority=3, 
-                due_date=datetime.date.today() + datetime.timedelta(days=14), 
+                title='Create site map',
+                project_id=cls.test_project.id,
+                priority=3,
+                due_date=datetime.date.today() + datetime.timedelta(days=14),
                 note='Lorem ipsum dolor sit amet.',
                 complete=False
             )
@@ -216,7 +238,7 @@ class TestTaskListView(TestCase):
         view.setup(request)
 
         get_queryset = view.get_queryset()
-        filtered_tasks = Task.tasks.filter(project__user = self.test_user)
+        filtered_tasks = Task.tasks.filter(project__user=self.test_user)
         self.assertEqual(list(get_queryset), list(filtered_tasks))
 
 
@@ -228,16 +250,20 @@ class TestCompletedTaskListView(TestCase):
         cls.test_user.set_password('mysecret')
         cls.test_user.save()
 
-        cls.test_project = Project.objects.create(title='Portfolio', description='Tasks to complete portfolio website', user=cls.test_user)
+        cls.test_project = Project.objects.create(
+            title='Portfolio',
+            description='Tasks to complete portfolio website',
+            user=cls.test_user
+            )
 
         # Create 5 Tasks
         number_of_tasks = 5
         for task in range(number_of_tasks):
             Task.objects.create(
-                title='Create site map', 
-                project_id=cls.test_project.id, 
-                priority=3, 
-                due_date=datetime.date.today() + datetime.timedelta(days=14), 
+                title='Create site map',
+                project_id=cls.test_project.id,
+                priority=3,
+                due_date=datetime.date.today() + datetime.timedelta(days=14),
                 note='Lorem ipsum dolor sit amet.',
                 complete=True
             )
@@ -250,7 +276,7 @@ class TestCompletedTaskListView(TestCase):
         view.setup(request)
 
         get_queryset = view.get_queryset()
-        filtered_tasks = Task.objects.filter(project__user = self.test_user).filter(complete=True)
+        filtered_tasks = Task.objects.filter(project__user=self.test_user).filter(complete=True)
         self.assertEqual(list(get_queryset), list(filtered_tasks))
 
 
@@ -262,12 +288,16 @@ class TestTaskUpdateView(TestCase):
         cls.test_user.set_password('mysecret')
         cls.test_user.save()
 
-        test_project = Project.objects.create(title='Portfolio', description='Tasks to complete portfolio website', user=cls.test_user)
+        test_project = Project.objects.create(
+            title='Portfolio',
+            description='Tasks to complete portfolio website',
+            user=cls.test_user
+            )
         cls.test_task = Task.objects.create(
-            title='Create site map', 
-            project_id=test_project.id, 
-            priority=3, 
-            due_date=datetime.date.today() + datetime.timedelta(days=14), 
+            title='Create site map',
+            project_id=test_project.id,
+            priority=3,
+            due_date=datetime.date.today() + datetime.timedelta(days=14),
             note='Lorem ipsum dolor sit amet.',
             complete=False
         )
@@ -301,12 +331,16 @@ class TestTaskCreateView(TestCase):
         cls.test_user.set_password('mysecret')
         cls.test_user.save()
 
-        test_project = Project.objects.create(title='Portfolio', description='Tasks to complete portfolio website', user=cls.test_user)
+        test_project = Project.objects.create(
+            title='Portfolio',
+            description='Tasks to complete portfolio website',
+            user=cls.test_user
+            )
         cls.test_task = Task.objects.create(
-            title='Create site map', 
-            project_id=test_project.id, 
-            priority=3, 
-            due_date=datetime.date.today() + datetime.timedelta(days=14), 
+            title='Create site map',
+            project_id=test_project.id,
+            priority=3,
+            due_date=datetime.date.today() + datetime.timedelta(days=14),
             note='Lorem ipsum dolor sit amet.',
             complete=False
         )
@@ -321,7 +355,7 @@ class TestTaskCreateView(TestCase):
         get_form_kwargs = view.get_form_kwargs()
         self.assertEqual(get_form_kwargs['user'], self.test_user)
 
-    
+
 class TestTaskDeleteView(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -331,13 +365,17 @@ class TestTaskDeleteView(TestCase):
         cls.test_user.set_password('mysecret')
         cls.test_user.save()
 
-        test_project = Project.objects.create(title='Portfolio', description='Tasks to complete portfolio website', user=cls.test_user)
-        
+        test_project = Project.objects.create(
+            title='Portfolio',
+            description='Tasks to complete portfolio website',
+            user=cls.test_user
+            )
+
         cls.test_task = Task.objects.create(
-            title='Create site map', 
-            project_id=test_project.id, 
-            priority=3, 
-            due_date=datetime.date.today() + datetime.timedelta(days=14), 
+            title='Create site map',
+            project_id=test_project.id,
+            priority=3,
+            due_date=datetime.date.today() + datetime.timedelta(days=14),
             note='Lorem ipsum dolor sit amet.',
             complete=False
             )
@@ -387,7 +425,7 @@ class TestUserSignUpView(TestCase):
             'password1': 'sylpassword',
             'password2': 'sylpassword'
         }
-        request = self.factory.post('signup/', data=data) 
+        request = self.factory.post('signup/', data=data)
         view = UserSignUpView()
         view.setup(request, user_group=self.group)
 
@@ -403,11 +441,11 @@ class TestUserSignUpView(TestCase):
             'password1': 'sylpassword',
             'password2': 'sylpassword'
         }
-        request = self.factory.post('signup/', data=data) 
+        request = self.factory.post('signup/', data=data)
         view = UserSignUpView()
         view.setup(request, user_group=self.group)
 
         post = view.post(request)
         post.client = Client()
 
-        self.assertEqual(post.status_code, 200)        
+        self.assertEqual(post.status_code, 200)
