@@ -26,18 +26,13 @@
             {% csrf_token %}
             {{ form.non_field_errors }} 
             {% for field in form %}
-                {% comment %} {% if field.label == 'Tag' %}
-                    <div class="field-wrapper select is-multiple my-2 mx-3">
-                        <label for="field.label">{{ field.label }}</label>
-                        {{ field }}
-                    </div> {% endcomment %}
                 {% if field.label == 'Project' or field.label == 'Priority' %}
-                    <div class="field-wrapper my-2 mx-3 is-flex is-flex-direction-column">
-                        <label for="field.label">{{ field.label }}</label>
-                        <div class="select is-align-self-flex-start">
-                            {{ field }}
-                        </div>
-                    </div>
+                        <div class="field-wrapper my-2 mx-3 is-flex is-flex-direction-column">
+                            <label for="field.label" {% if field.label == 'Project' and current_project %}style="display: none;"{% endif %}>{{ field.label }}</label>
+                            <div class="select is-align-self-flex-start" {% if field.label == 'Project' and current_project %}style="display: none;"{% endif %}>
+                                {{ field }}
+                            </div>
+                        </div>    
                 {% else %}
                     <div class="field-wrapper my-3 mx-3">
                     <label for="field.label">{{ field.label }}</label>

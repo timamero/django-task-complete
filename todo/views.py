@@ -4,7 +4,9 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.views import PasswordResetView
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
+from django.urls.base import reverse
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
+from django.http import HttpResponseRedirect
 
 from .forms import ProjectForm, TaskForm, UserSignUpForm
 from .models import Project, Task
@@ -27,7 +29,12 @@ class ProjectListView(LoginRequiredMixin, ListView):
 def project_task_list(request, pk):
     project = get_object_or_404(Project, id=pk)
     tasks = Task.tasks.filter(project=project)
-
+    
+    # Set project name as session variable
+    request.session.get('current_project', project.id)
+    request.session['current_project'] = project.id
+    print('session id: ')
+    print(request.session['current_project'])
     if request.user != project.user:
         return redirect('/account/login/?next=%s')
 
@@ -71,6 +78,13 @@ class ProjectDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 class TaskListView(LoginRequiredMixin, ListView):
     login_url = '/account/login/'
 
+    def get(self, request, *args, **kwargs):
+        # Set project name as empty string so that project selection is not preselected
+        # self.request.session.get('current_project', '')
+        self.request.session['current_project'] = ''
+        print(self.request.session['current_project'])
+        return super().get(request, *args, **kwargs)
+
     def get_queryset(self):
         return Task.tasks.filter(project__user=self.request.user)
 
@@ -90,10 +104,32 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
     model = Task
     form_class = TaskForm
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_project'] = self.request.session['current_project']
+        return context
+
     def get_form_kwargs(self):
         kwargs = super(TaskCreateView, self).get_form_kwargs()
         kwargs['user'] = self.request.user
+        kwargs['request'] = self.request.session['current_project']
         return kwargs
+
+    def get_initial(self):
+        initial = super(TaskCreateView, self).get_initial()
+        if self.request.session['current_project'] != '': 
+            initial['project_id'] = 16
+        return initial
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        if self.request.session['current_project'] != '': 
+            self.object.project_id = int(self.request.session['current_project'])
+            self.object.save()
+        else:
+            self.object.save()
+        
+        return HttpResponseRedirect(reverse_lazy('project-task-list', kwargs={'pk': self.object.project_id}))
 
 
 class TaskDeleteView(LoginRequiredMixin, DeleteView):

@@ -17,13 +17,20 @@ class TaskForm(forms.ModelForm):
             'note': forms.Textarea(attrs={'rows': 2}),
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, request=None, **kwargs):
         user = kwargs.pop('user')
         super(TaskForm, self).__init__(*args, **kwargs)
+        
+        self.request = request
+        if request is not None:
+            current_project = request
+
         self.fields['title'].widget.attrs.update({'class': 'input'})
         self.fields['due_date'].widget.attrs.update({'class': 'input'})
         self.fields['note'].widget.attrs.update({'class': 'textarea'})
         self.fields['project'].queryset = Project.objects.filter(user=user)
+        if current_project:
+            self.fields['project'].initial = current_project
 
         # https://stackoverflow.com/questions/24041649/filtering-a-model-in-a-createview-with-get-queryset
 
