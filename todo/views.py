@@ -12,6 +12,12 @@ from .forms import ProjectForm, TaskForm, UserSignUpForm
 from .models import Project, Task
 
 
+def num_of_tasks(request):
+    """To make available in all views, add 'todo.views.num_of_tasks' to TEMPLATES.OPTIONS.context_processors"""
+    return {
+        'num_of_tasks': Task.tasks.filter(project__user=request.user).count()
+    }
+
 def index(request):
     return render(request, 'index.html')
 

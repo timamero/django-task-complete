@@ -30,9 +30,12 @@
                     <a class="navbar-item" href="{% url 'projects' %}">
                         Projects
                     </a>
-                    <a class="navbar-item" href="{% url 'tasks' %}">
-                        Tasks
-                    </a>
+                    {% if num_of_tasks > 0 %}
+                        <a class="navbar-item" href="{% url 'tasks' %}">
+                            Tasks
+                        </a>
+                    {% endif %}
+                    
                 {% endif %}   
 
                 <div class="navbar-end">
