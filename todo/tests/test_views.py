@@ -3,6 +3,7 @@ import datetime
 from django.contrib.auth.models import AnonymousUser, Group, User
 from django.http import HttpRequest
 from django.test import Client, RequestFactory, TestCase
+from django.contrib.sessions.middleware import SessionMiddleware
 from django.urls import reverse, reverse_lazy
 
 from todo.forms import ProjectForm
@@ -16,21 +17,42 @@ from todo.views import (CompletedTaskListView, ProjectCreateView,
 class TestIndexView(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.c = Client()
+        cls.factory = RequestFactory()
+        cls.test_user = User.objects.create(username='john', email='john@example.com')
+        cls.test_user.set_password('mysecret')
+        cls.test_user.save()
 
     def test_url_allowed_hosts(self):
         """
         Test allowed hosts
         """
-        response = self.c.get('/')
+        request = self.factory.get('/')
+        request.user = self.test_user
+
+        middleware = SessionMiddleware()
+        middleware.process_request(request)
+        request.session.save()
+        request.session['has_tasks'] = False
+
+        response = index(request)
+        
         self.assertEqual(response.status_code, 200)
 
     def test_index_html(self):
         request = HttpRequest()
+        request.user = self.test_user
+        
+        middleware = SessionMiddleware()
+        middleware.process_request(request)
+        request.session.save()
+        request.session['has_tasks'] = False
+        
         response = index(request)
+
         html = response.content.decode('utf8')
         html_title = '<title>Task Complete</title>'
         html_doctype = '\n<!DOCTYPE html>\n'
+
         self.assertIn(html_title, html)
         self.assertTrue(html.startswith(html_doctype))
         self.assertEqual(response.status_code, 200)
@@ -327,6 +349,7 @@ class TestTaskCreateView(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.factory = RequestFactory()
+
         cls.test_user = User.objects.create(username='john', email='john@example.com')
         cls.test_user.set_password('mysecret')
         cls.test_user.save()
@@ -348,6 +371,10 @@ class TestTaskCreateView(TestCase):
     def test_get_form_kwargs_method(self):
         url = reverse('task-create')
         request = self.factory.get(url)
+        middleware = SessionMiddleware()
+        middleware.process_request(request)
+        request.session.save()
+        request.session['current_project'] = self.test_task.project_id
         request.user = self.test_user
         view = TaskCreateView()
         view.setup(request)
@@ -415,7 +442,6 @@ class TestUserSignUpView(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.factory = RequestFactory()
-        # cls.c = Client()
         cls.group = Group.objects.create(name='Task Manager User')
 
     def test_valid_form_redirects_to_login(self):
@@ -425,11 +451,12 @@ class TestUserSignUpView(TestCase):
             'password1': 'sylpassword',
             'password2': 'sylpassword'
         }
-        request = self.factory.post('signup/', data=data)
+        request = self.factory.post('signup/', data=data)     
+        request.user = AnonymousUser()
+        
         view = UserSignUpView()
         view.setup(request, user_group=self.group)
-
-        post = view.post(request)
+        post = view.post(request)     
         post.client = Client()
 
         self.assertRedirects(post, '/account/login/', status_code=302)
@@ -442,6 +469,7 @@ class TestUserSignUpView(TestCase):
             'password2': 'sylpassword'
         }
         request = self.factory.post('signup/', data=data)
+        request.user = AnonymousUser()
         view = UserSignUpView()
         view.setup(request, user_group=self.group)
 
