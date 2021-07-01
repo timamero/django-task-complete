@@ -21,6 +21,7 @@ class TaskForm(forms.ModelForm):
         user = kwargs.pop('user')
         super(TaskForm, self).__init__(*args, **kwargs)
         
+        current_project = ''
         self.request = request
         if request is not None:
             current_project = request

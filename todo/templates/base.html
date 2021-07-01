@@ -30,7 +30,7 @@
                     <a class="navbar-item" href="{% url 'projects' %}">
                         Projects
                     </a>
-                    {% if num_of_tasks > 0 %}
+                    {% if has_tasks %}
                         <a class="navbar-item" href="{% url 'tasks' %}">
                             Tasks
                         </a>

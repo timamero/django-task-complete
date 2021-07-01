@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 from django.contrib.auth.views import PasswordResetView
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
@@ -12,19 +12,34 @@ from .forms import ProjectForm, TaskForm, UserSignUpForm
 from .models import Project, Task
 
 
-def num_of_tasks(request):
-    """To make available in all views, add 'todo.views.num_of_tasks' to TEMPLATES.OPTIONS.context_processors"""
-    return {
-        'num_of_tasks': Task.tasks.filter(project__user=request.user).count()
-    }
-
 def index(request):
-    return render(request, 'index.html')
+    if request.user in User.objects.all():
+        request.session.get('has_tasks', False)
+        context = {
+            'has_tasks': request.session['has_tasks']
+        }
+    else:
+        context = {}
+    return render(request, 'index.html', context=context)
 
 
 class ProjectListView(LoginRequiredMixin, ListView):
     login_url = '/account/login/'
     model = Project
+
+    def get(self, request, *args, **kwargs):
+        has_tasks = True
+        # Set has_tasks to number of total tasks belonging to current user
+        if Task.tasks.filter(project__user=request.user).count() == 0:
+            has_tasks = False
+        self.request.session['has_tasks'] = has_tasks
+        self.request.session['current_project'] = ''
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['has_tasks'] = self.request.session['has_tasks']
+        return context
 
     # List only projects that belong to logged in user
     def get_queryset(self):
@@ -39,14 +54,19 @@ def project_task_list(request, pk):
     # Set project name as session variable
     request.session.get('current_project', project.id)
     request.session['current_project'] = project.id
-    print('session id: ')
-    print(request.session['current_project'])
+
+    has_tasks = True
+    if Task.tasks.filter(project__user=request.user).count() == 0:
+            has_tasks = False
+    request.session['has_tasks'] = has_tasks
+
     if request.user != project.user:
         return redirect('/account/login/?next=%s')
 
     context = {
         'project': project,
         'tasks': tasks,
+        'has_tasks': request.session['has_tasks']
     }
     return render(request, 'todo/project-task-list.html', context=context)
 
@@ -60,6 +80,11 @@ class ProjectUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         project = self.get_object()
         return self.request.user == project.user
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['has_tasks'] = self.request.session['has_tasks']
+        return context
+
 
 class ProjectCreateView(LoginRequiredMixin, CreateView):
     login_url = '/account/login/'
@@ -69,6 +94,11 @@ class ProjectCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['has_tasks'] = self.request.session['has_tasks']
+        return context
 
 
 class ProjectDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -80,19 +110,27 @@ class ProjectDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         project = self.get_object()
         return self.request.user == project.user
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['has_tasks'] = self.request.session['has_tasks']
+        return context
+
 
 class TaskListView(LoginRequiredMixin, ListView):
     login_url = '/account/login/'
 
     def get(self, request, *args, **kwargs):
         # Set project name as empty string so that project selection is not preselected
-        # self.request.session.get('current_project', '')
         self.request.session['current_project'] = ''
-        print(self.request.session['current_project'])
         return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
         return Task.tasks.filter(project__user=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['has_tasks'] = self.request.session['has_tasks']
+        return context
 
 
 class TaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -103,6 +141,11 @@ class TaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def test_func(self):
         task = self.get_object()
         return self.request.user == task.project.user
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['has_tasks'] = self.request.session['has_tasks']
+        return context
 
 
 class TaskCreateView(LoginRequiredMixin, CreateView):
@@ -137,6 +180,11 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
         
         return HttpResponseRedirect(reverse_lazy('project-task-list', kwargs={'pk': self.object.project_id}))
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['has_tasks'] = self.request.session['has_tasks']
+        return context
+
 
 class TaskDeleteView(LoginRequiredMixin, DeleteView):
     login_url = '/account/login/'
@@ -150,6 +198,11 @@ class TaskDeleteView(LoginRequiredMixin, DeleteView):
         task = self.get_object()
         return self.request.user == task.project.user
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['has_tasks'] = self.request.session['has_tasks']
+        return context
+
 
 class CompletedTaskListView(LoginRequiredMixin, ListView):
     login_url = '/account/login/'
@@ -157,6 +210,11 @@ class CompletedTaskListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return Task.objects.filter(project__user=self.request.user).filter(complete=True)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['has_tasks'] = self.request.session['has_tasks']
+        return context
 
 
 class PasswordReset(LoginRequiredMixin, PasswordResetView):
