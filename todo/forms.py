@@ -17,14 +17,14 @@ class TaskForm(forms.ModelForm):
             'note': forms.Textarea(attrs={'rows': 2}),
         }
 
-    def __init__(self, *args, request=None, **kwargs):
-        user = kwargs.pop('user')
+    def __init__(self, *args, project=None, **kwargs):
+        user = kwargs.pop('user', 0)
         super(TaskForm, self).__init__(*args, **kwargs)
-        
+
         current_project = ''
-        self.request = request
-        if request is not None:
-            current_project = request
+        self.project = project
+        if project is not None:
+            current_project = project
 
         self.fields['title'].widget.attrs.update({'class': 'input'})
         self.fields['due_date'].widget.attrs.update({'class': 'input'})

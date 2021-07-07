@@ -4,22 +4,19 @@ from django.contrib.auth.models import Group, User
 from django.contrib.auth.views import PasswordResetView
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
-from django.urls.base import reverse
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
-from django.http import HttpResponseRedirect
 
 from .forms import ProjectForm, TaskForm, UserSignUpForm
 from .models import Project, Task
 
 
 def index(request):
+    context = {}
     if request.user in User.objects.all():
         request.session.get('has_tasks', False)
         context = {
             'has_tasks': request.session['has_tasks']
         }
-    else:
-        context = {}
     return render(request, 'index.html', context=context)
 
 
@@ -50,7 +47,7 @@ class ProjectListView(LoginRequiredMixin, ListView):
 def project_task_list(request, pk):
     project = get_object_or_404(Project, id=pk)
     tasks = Task.tasks.filter(project=project)
-    
+
     # Set project name as session variable
     request.session.get('current_project', project.id)
     request.session['current_project'] = project.id
@@ -81,6 +78,7 @@ class ProjectUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return self.request.user == project.user
 
     def get_context_data(self, **kwargs):
+        self.object = self.get_object()
         context = super().get_context_data(**kwargs)
         context['has_tasks'] = self.request.session['has_tasks']
         return context
@@ -111,6 +109,7 @@ class ProjectDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return self.request.user == project.user
 
     def get_context_data(self, **kwargs):
+        self.object = self.get_object()
         context = super().get_context_data(**kwargs)
         context['has_tasks'] = self.request.session['has_tasks']
         return context
@@ -128,6 +127,7 @@ class TaskListView(LoginRequiredMixin, ListView):
         return Task.tasks.filter(project__user=self.request.user)
 
     def get_context_data(self, **kwargs):
+        self.object_list = self.get_queryset()
         context = super().get_context_data(**kwargs)
         context['has_tasks'] = self.request.session['has_tasks']
         return context
@@ -142,7 +142,13 @@ class TaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         task = self.get_object()
         return self.request.user == task.project.user
 
+    def get_form_kwargs(self):
+        kwargs = super(TaskUpdateView, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
     def get_context_data(self, **kwargs):
+        self.object = self.get_object()
         context = super().get_context_data(**kwargs)
         context['has_tasks'] = self.request.session['has_tasks']
         return context
@@ -153,36 +159,24 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
     model = Task
     form_class = TaskForm
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['current_project'] = self.request.session['current_project']
-        return context
-
     def get_form_kwargs(self):
         kwargs = super(TaskCreateView, self).get_form_kwargs()
         kwargs['user'] = self.request.user
-        kwargs['request'] = self.request.session['current_project']
+        kwargs['project'] = self.request.session['current_project']
         return kwargs
 
     def get_initial(self):
+        print('run get_inital')
         initial = super(TaskCreateView, self).get_initial()
-        if self.request.session['current_project'] != '': 
-            initial['project_id'] = 16
+        if self.request.session['current_project'] != '':
+            initial['project_id'] = self.request.session['current_project']
         return initial
 
-    def form_valid(self, form):
-        self.object = form.save(commit=False)
-        if self.request.session['current_project'] != '': 
-            self.object.project_id = int(self.request.session['current_project'])
-            self.object.save()
-        else:
-            self.object.save()
-        
-        return HttpResponseRedirect(reverse_lazy('project-task-list', kwargs={'pk': self.object.project_id}))
-
     def get_context_data(self, **kwargs):
+        self.object = None
         context = super().get_context_data(**kwargs)
         context['has_tasks'] = self.request.session['has_tasks']
+        context['current_project'] = self.request.session['current_project']
         return context
 
 
@@ -199,6 +193,7 @@ class TaskDeleteView(LoginRequiredMixin, DeleteView):
         return self.request.user == task.project.user
 
     def get_context_data(self, **kwargs):
+        self.object = self.get_object()
         context = super().get_context_data(**kwargs)
         context['has_tasks'] = self.request.session['has_tasks']
         return context
@@ -212,6 +207,7 @@ class CompletedTaskListView(LoginRequiredMixin, ListView):
         return Task.objects.filter(project__user=self.request.user).filter(complete=True)
 
     def get_context_data(self, **kwargs):
+        self.object_list = self.get_queryset()
         context = super().get_context_data(**kwargs)
         context['has_tasks'] = self.request.session['has_tasks']
         return context

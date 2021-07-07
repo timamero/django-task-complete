@@ -1,9 +1,9 @@
 import datetime
 
 from django.contrib.auth.models import AnonymousUser, Group, User
+from django.contrib.sessions.middleware import SessionMiddleware
 from django.http import HttpRequest
 from django.test import Client, RequestFactory, TestCase
-from django.contrib.sessions.middleware import SessionMiddleware
 from django.urls import reverse, reverse_lazy
 
 from todo.forms import ProjectForm
@@ -35,18 +35,18 @@ class TestIndexView(TestCase):
         request.session['has_tasks'] = False
 
         response = index(request)
-        
+
         self.assertEqual(response.status_code, 200)
 
     def test_index_html(self):
         request = HttpRequest()
         request.user = self.test_user
-        
+
         middleware = SessionMiddleware()
         middleware.process_request(request)
         request.session.save()
         request.session['has_tasks'] = False
-        
+
         response = index(request)
 
         html = response.content.decode('utf8')
@@ -154,6 +154,7 @@ class TestProjectUpdateView(TestCase):
         url = reverse('project-update', kwargs={'pk': self.test_project.id})
         request = self.factory.get(url)
         request.user = self.test_user
+
         view = ProjectUpdateView()
         view.setup(request, pk=self.test_project.id)
 
@@ -169,6 +170,22 @@ class TestProjectUpdateView(TestCase):
 
         test_func = view.test_func()
         self.assertEqual(test_func, False)
+
+    def test_get_context_data(self):
+        url = reverse('project-update', kwargs={'pk': self.test_project.id})
+        request = self.factory.get(url)
+        request.user = self.test_user
+
+        view = ProjectUpdateView()
+        view.setup(request, pk=self.test_project.id)
+
+        middleware = SessionMiddleware()
+        middleware.process_request(request)
+        request.session.save()
+        request.session['has_tasks'] = False
+
+        context = view.get_context_data()
+        self.assertIn('has_tasks', context)
 
 
 class TestProjectCreateView(TestCase):
@@ -200,6 +217,28 @@ class TestProjectCreateView(TestCase):
         form_valid = view.form_valid(form)
         self.assertEqual(form_valid.status_code, 302)
 
+    def test_get_context_data(self):
+        url = reverse('project-create')
+        request = self.factory.get(url)
+        request.user = self.test_user
+        data = {
+            'title': self.test_project.title,
+            'description': self.test_project.description,
+        }
+        form = ProjectForm(data=data)
+        view = ProjectCreateView()
+        view.setup(request)
+
+        form_valid = view.form_valid(form)
+
+        middleware = SessionMiddleware()
+        middleware.process_request(request)
+        request.session.save()
+        request.session['has_tasks'] = False
+
+        context = view.get_context_data()
+        self.assertIn('has_tasks', context)
+
 
 class TestProjectDeleteView(TestCase):
     @classmethod
@@ -224,6 +263,22 @@ class TestProjectDeleteView(TestCase):
 
         test_func = view.test_func()
         self.assertEqual(test_func, True)
+
+    def test_get_context_data(self):
+        url = reverse('project-delete', kwargs={'pk': self.test_project.id})
+        request = self.factory.get(url)
+        request.user = self.test_user
+
+        view = ProjectDeleteView()
+        view.setup(request, pk=self.test_project.id)
+
+        middleware = SessionMiddleware()
+        middleware.process_request(request)
+        request.session.save()
+        request.session['has_tasks'] = True
+
+        context = view.get_context_data()
+        self.assertIn('has_tasks', context)
 
 
 class TestTaskListView(TestCase):
@@ -263,6 +318,37 @@ class TestTaskListView(TestCase):
         filtered_tasks = Task.tasks.filter(project__user=self.test_user)
         self.assertEqual(list(get_queryset), list(filtered_tasks))
 
+    def test_get_method(self):
+        url = reverse('tasks')
+        request = self.factory.get(url)
+        request.user = self.test_user
+        view = TaskListView()
+        view.setup(request)
+
+        middleware = SessionMiddleware()
+        middleware.process_request(request)
+        request.session.save()
+        request.session['has_tasks'] = True
+
+        get = view.get(request)
+        self.assertIn('current_project', request.session)
+
+    def test_get_context_data(self):
+        url = reverse('tasks')
+        request = self.factory.get(url)
+        request.user = self.test_user
+
+        view = TaskListView()
+        view.setup(request)
+
+        middleware = SessionMiddleware()
+        middleware.process_request(request)
+        request.session.save()
+        request.session['has_tasks'] = True
+
+        context = view.get_context_data()
+        self.assertIn('has_tasks', context)
+
 
 class TestCompletedTaskListView(TestCase):
     @classmethod
@@ -300,6 +386,22 @@ class TestCompletedTaskListView(TestCase):
         get_queryset = view.get_queryset()
         filtered_tasks = Task.objects.filter(project__user=self.test_user).filter(complete=True)
         self.assertEqual(list(get_queryset), list(filtered_tasks))
+
+    def test_get_context_data(self):
+        url = reverse('completed-tasks')
+        request = self.factory.get(url)
+        request.user = self.test_user
+
+        view = CompletedTaskListView()
+        view.setup(request)
+
+        middleware = SessionMiddleware()
+        middleware.process_request(request)
+        request.session.save()
+        request.session['has_tasks'] = True
+
+        context = view.get_context_data()
+        self.assertIn('has_tasks', context)
 
 
 class TestTaskUpdateView(TestCase):
@@ -344,6 +446,22 @@ class TestTaskUpdateView(TestCase):
         test_func = view.test_func()
         self.assertEqual(test_func, False)
 
+    def test_get_context_data(self):
+        url = reverse('task-update', kwargs={'pk': self.test_task.id})
+        request = self.factory.get(url)
+        request.user = self.test_user
+
+        view = TaskUpdateView()
+        view.setup(request, pk=self.test_task.id)
+
+        middleware = SessionMiddleware()
+        middleware.process_request(request)
+        request.session.save()
+        request.session['has_tasks'] = True
+
+        context = view.get_context_data()
+        self.assertIn('has_tasks', context)
+
 
 class TestTaskCreateView(TestCase):
     @classmethod
@@ -367,6 +485,24 @@ class TestTaskCreateView(TestCase):
             note='Lorem ipsum dolor sit amet.',
             complete=False
         )
+
+    def test_get_context_data(self):
+        url = reverse('task-create')
+        request = self.factory.get(url)
+        request.user = self.test_user
+
+        view = TaskCreateView()
+        view.setup(request)
+
+        middleware = SessionMiddleware()
+        middleware.process_request(request)
+        request.session.save()
+        request.session['has_tasks'] = True
+        request.session['current_project'] = self.test_task.project_id
+
+        context = view.get_context_data()
+        self.assertIn('has_tasks', context)
+        self.assertIn('current_project', context)
 
     def test_get_form_kwargs_method(self):
         url = reverse('task-create')
@@ -437,6 +573,22 @@ class TestTaskDeleteView(TestCase):
         test_func = view.test_func()
         self.assertEqual(test_func, False)
 
+    def test_get_context_data(self):
+        url = reverse('task-delete', kwargs={'pk': self.test_task.id})
+        request = self.factory.get(url)
+        request.user = self.test_user
+
+        view = TaskDeleteView()
+        view.setup(request, pk=self.test_task.id)
+
+        middleware = SessionMiddleware()
+        middleware.process_request(request)
+        request.session.save()
+        request.session['has_tasks'] = True
+
+        context = view.get_context_data()
+        self.assertIn('has_tasks', context)
+
 
 class TestUserSignUpView(TestCase):
     @classmethod
@@ -451,12 +603,12 @@ class TestUserSignUpView(TestCase):
             'password1': 'sylpassword',
             'password2': 'sylpassword'
         }
-        request = self.factory.post('signup/', data=data)     
+        request = self.factory.post('signup/', data=data)
         request.user = AnonymousUser()
-        
+
         view = UserSignUpView()
         view.setup(request, user_group=self.group)
-        post = view.post(request)     
+        post = view.post(request)
         post.client = Client()
 
         self.assertRedirects(post, '/account/login/', status_code=302)
